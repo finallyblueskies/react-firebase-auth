@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { useFirebase } from '../Firebase';
+import { FormEvent, useState } from "react";
+import { useAuth } from "./AuthProvider";
 
 const VerifyEmailForm = () => {
+  const [email, setEmail] = useState("");
 
-  const [email, setEmail] = useState('');
+  const { sendVerificationEmail } = useAuth();
 
-  const { sendVerificationEmail } = useFirebase();
-
-  const onSubmit = async event => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       await sendVerificationEmail();
     } catch (e) {
-      // Handle erros here
+      // Handle errors here
       console.error(e);
     }
   };
@@ -27,18 +26,17 @@ const VerifyEmailForm = () => {
         placeholder="Email"
         autoComplete="off"
       />
-      <button type="submit">
-        Send verification email
-      </button>
+      <button type="submit">Send verification email</button>
     </form>
   );
-}
+};
 
 const VerifyEmail = () => (
   <>
     <h1>Verify your email.</h1>
     <p>
-      If you did not receive a verification link, you can use the form below to resend it.
+      If you did not receive a verification link, you can use the form below to
+      resend it.
     </p>
     <VerifyEmailForm />
   </>

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { useFirebase } from "../Firebase";
+import { FormEvent, useState } from "react";
+import { useAuth } from "./AuthProvider";
 
 const ChangePasswordForm = () => {
-  const { updatePassword } = useFirebase();
+  const { updatePassword } = useAuth();
   const [passwordOne, setPasswordOne] = useState(``);
-  const [passwordTwo, setPasswordTwo] = useState(``)
+  const [passwordTwo, setPasswordTwo] = useState(``);
 
-  const onSubmit = async event => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       await updatePassword(passwordOne);
@@ -34,20 +34,19 @@ const ChangePasswordForm = () => {
         placeholder="Repeat password"
         autoComplete="off"
       />
-      <button type="submit">
-        Change password
-      </button>
+      <button type="submit">Change password</button>
     </form>
   );
 };
 
 const Account = () => {
-  const { auth: { currentUser } } = useFirebase();
+  const { user } = useAuth();
+  if (!user) throw new Error("Account - User not found");
   return (
     <>
-      <h1>Hello {currentUser.displayName}!</h1>
+      <h1>Hello {user.displayName}!</h1>
       <h3>Email</h3>
-      {currentUser.email}
+      {user.email}
       <h3>Change password</h3>
       <ChangePasswordForm />
     </>

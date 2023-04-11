@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { useFirebase } from '../Firebase';
+import { FormEvent, useState } from "react";
+import { useAuth } from "./AuthProvider";
 
 const ResetPasswordForm = () => {
+  const [email, setEmail] = useState("");
 
-  const [email, setEmail] = useState('');
+  const { resetPassword } = useAuth();
 
-  const { resetPassword } = useFirebase();
-
-  const onSubmit = async event => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       await resetPassword(email);
@@ -27,19 +26,15 @@ const ResetPasswordForm = () => {
         placeholder="Email"
         autoComplete="off"
       />
-      <button type="submit">
-        Reset password
-      </button>
+      <button type="submit">Reset password</button>
     </form>
   );
-}
+};
 
 const ResetPassword = () => (
   <>
     <h1>Forgot your password?</h1>
-    <p>
-      Use the form below to reset it.
-    </p>
+    <p>Use the form below to reset it.</p>
     <ResetPasswordForm />
   </>
 );

@@ -1,33 +1,37 @@
-import React, { useState } from 'react';
-import { useFirebase } from '../Firebase';
+import React, { FormEvent, useState } from "react";
+import { useAuth } from "./AuthProvider";
 
 const SocialSignIn = () => {
-  const { signInWithGoogle, signInWithFacebook, signInWithTwitter } = useFirebase();
-  
-  const signIn = async method => {
+  const { signInWithGoogle, signInWithFacebook, signInWithTwitter } = useAuth();
+  const signIn = async (method: () => any) => {
     try {
       await method();
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     }
   };
 
   return (
     <>
-      <button onClick={() => signIn(signInWithGoogle)}>Sign in with Google</button>
-      <button onClick={() => signIn(signInWithFacebook)}>Sign in with Facebook</button>
-      <button onClick={() => signIn(signInWithTwitter)}>Sign in with Twitter</button>
+      <button onClick={() => signIn(signInWithGoogle)}>
+        Sign in with Google
+      </button>
+      <button onClick={() => signIn(signInWithFacebook)}>
+        Sign in with Facebook
+      </button>
+      <button onClick={() => signIn(signInWithTwitter)}>
+        Sign in with Twitter
+      </button>
     </>
   );
-}
+};
 const SignInForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { signIn } = useAuth();
 
-  const { signIn } = useFirebase();
-
-  const onSubmit = async event => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       await signIn(email, password);
@@ -55,12 +59,10 @@ const SignInForm = () => {
         placeholder="Password"
         autoComplete="password"
       />
-      <button type="submit">
-        Sign in
-      </button>
+      <button type="submit">Sign in</button>
     </form>
   );
-}
+};
 
 const SignIn = () => (
   <>

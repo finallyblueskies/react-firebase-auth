@@ -1,36 +1,32 @@
-import React, { useState, useRef } from 'react';
-import { useFirebase } from '../Firebase';
-import { useHistory } from "react-router-dom";
+import { useState, useRef, FormEvent } from "react";
 
-import * as ROUTES from "../lib/routes";
+import { useAuth } from "./AuthProvider";
 
 const SignUpForm = () => {
-
   const [username, setUsername] = useState(``);
   const [email, setEmail] = useState(``);
   const [passwordOne, setPasswordOne] = useState(``);
   const [passwordTwo, setPasswordTwo] = useState(``);
 
-  const { createUser, sendVerificationEmail, signIn, renderRecaptcha } = useFirebase();
-  const captchaRef = useRef();
-  const history  = useHistory();
+  const { createUser, sendVerificationEmail, signIn, renderRecaptcha } =
+    useAuth();
+  const captchaRef = useRef<HTMLDivElement | null>(null);
 
   const signUp = async () => {
-    captchaRef.current.innerHTML = ``;
+    captchaRef.current!.innerHTML = ``;
     try {
       await createUser(email, passwordOne);
       await signIn(email, passwordOne);
       await sendVerificationEmail();
-      history.push(ROUTES.VERIFY_EMAIL);
-    } catch(e) {
+    } catch (e) {
       // Handle sign up errors here
       console.error(e);
     }
-  }
+  };
 
-  const onSubmit = event => {
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    renderRecaptcha(captchaRef.current, { callback: signUp });
+    renderRecaptcha(captchaRef.current!, { callback: signUp });
   };
 
   return (
@@ -67,13 +63,11 @@ const SignUpForm = () => {
         placeholder="Confirm Password"
         autoComplete="new-password"
       />
-      <button type="submit">
-        Sign Up
-      </button>
+      <button type="submit">Sign Up</button>
       <div ref={captchaRef} />
     </form>
   );
-}
+};
 
 const SignUp = () => (
   <>
